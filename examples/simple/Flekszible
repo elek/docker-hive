@@ -1,0 +1,11 @@
+source:
+- path: ../../flekszible
+- url: github.com/flokkr/docker-hadoop
+import:
+- path: hadoop
+- path: hive
+  transformations:
+  - type: hdfs/config
+  - type: hadoop/distribute
+    image: flokkr/hadoop:3.1.2
+- path: hdfs

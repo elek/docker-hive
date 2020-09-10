@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hive-metastoredb
+  labels:
+    app: hive
+    component: metastoredb
+spec:
+  selector:
+    matchLabels:
+      app: hive
+      component: metastoredb
+  replicas: 1
+  serviceName: hive-metastoredb
+  template:
+    metadata:
+      labels:
+        app: hive
+        component: metastoredb
+    spec:
+      containers:
+        - name: db
+          image: postgres:12
+          env:
+            - name: POSTGRES_PASSWORD
+              value: rootpwd
+            - name: POSTGRES_DB
+              value: metastore
+            - name: POSTGRES_USER
+              value: hive
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hive-metastoredb
+  labels:
+    app: hive
+    component: metastoredb
+spec:
+  ports:
+  - port: 8080
+    name: ui
+  clusterIP: None
+  selector:
+     app: hive
+     component: metastoredb

@@ -1,0 +1,49 @@
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hive-metastore
+  labels:
+    app: hive
+    component: metastore
+spec:
+  selector:
+    matchLabels:
+      app: hive
+      component: metastore
+  replicas: 1
+  serviceName: hive-metastore
+  template:
+    metadata:
+      labels:
+        app: hive
+        component: metastore
+    spec:
+      containers:
+      - name: hive
+        image: elek/hive
+        envFrom:
+        - configMapRef:
+            name: hive-config
+        - configMapRef:
+            name: hdfs-config
+        args:
+        - hive
+        - --service
+        - metastore
+        volumeMounts:
+        - name: hadoop
+          mountPath: /opt/hadoop
+      initContainers:
+      - name: hadoopcopy
+        image: flokkr/hadoop:3.1.2
+        command:
+        - bash
+        - -c
+        - cp -r /opt/hadoop/* /opt/hadoop-dist/
+        volumeMounts:
+        - name: hadoop
+          mountPath: /opt/hadoop-dist
+      volumes:
+      - name: hadoop
+        emptyDir: {}

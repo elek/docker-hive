@@ -1,0 +1,49 @@
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hive-hiveserver2
+  labels:
+    app: hive
+    component: hiveserver2
+spec:
+  selector:
+    matchLabels:
+      app: hive
+      component: hiveserver2
+  replicas: 1
+  serviceName: hive-hiveserver2
+  template:
+    metadata:
+      labels:
+        app: hive
+        component: hiveserver2
+    spec:
+      containers:
+      - name: hive
+        image: elek/hive
+        envFrom:
+        - configMapRef:
+            name: hive-config
+        - configMapRef:
+            name: hdfs-config
+        args:
+        - hive
+        - --service
+        - hiveserver2
+        volumeMounts:
+        - name: hadoop
+          mountPath: /opt/hadoop
+      initContainers:
+      - name: hadoopcopy
+        image: flokkr/hadoop:3.1.2
+        command:
+        - bash
+        - -c
+        - cp -r /opt/hadoop/* /opt/hadoop-dist/
+        volumeMounts:
+        - name: hadoop
+          mountPath: /opt/hadoop-dist
+      volumes:
+      - name: hadoop
+        emptyDir: {}

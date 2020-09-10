@@ -1,13 +1,15 @@
-FROM flokkr/hadoop:latest
+ARG BASE=latest
+FROM flokkr/base:${BASE}
+ARG ARTIFACTDIR
 ENV HADOOP_HOME=/opt/hadoop
-RUN sudo adduser -h /opt/ -s /bin/bash -G flokkr -D hive && sudo chown hive /opt
+RUN useradd --uid 1000 hive --gid 1000 -G flokkr --home /opt/hive && chown hive /opt
 USER hive
 VOLUME /data
 RUN sudo chown hive /data
 ENV CONF_DIR /opt/hive/conf
-ENV PATH $PATH:/opt/hive/bin
-ARG URL
+ENV HADOOP_CONF_DIR /opt/hive/conf
 WORKDIR /opt
-RUN wget $URL -O hive.tar.gz && tar zxf hive.tar.gz && rm hive.tar.gz && mv apache-hive* hive
+ADD --chown=hive:flokkr ${ARTIFACTDIR} /opt/hive
 WORKDIR /opt/hive
+ENV PATH $PATH:/opt/hive/bin
 ADD hive-log4j2.properties /opt/hive/conf

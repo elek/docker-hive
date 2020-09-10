@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hive-metastore
+  labels:
+    app: hive
+    component: metastore
+spec:
+  selector:
+    matchLabels:
+      app: hive
+      component: metastore
+  replicas: 1
+  serviceName: hive-metastore
+  template:
+    metadata:
+      labels:
+        app: hive
+        component: metastore
+    spec:
+      containers:
+        - name: hive
+          image: elek/hive
+          envFrom:
+          - configMapRef:
+               name: hive-config
+          args:
+            - hive
+            - --service
+            - metastore
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hive-metastore
+  labels:
+    app: hive
+    component: metastore
+spec:
+  ports:
+  - port: 8080
+    name: ui
+  clusterIP: None
+  selector:
+     app: hive
+     component: metastore

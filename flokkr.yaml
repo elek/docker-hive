@@ -1,0 +1,7 @@
+name: hive
+org: elek
+basetag: 37
+urlpath: hive/hive-%s/apache-hive-%s-bin.tar.gz
+git: https://github.com/flokkr/docker-hive
+versions:
+  - 3.1.2

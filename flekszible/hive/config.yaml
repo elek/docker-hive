@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hive-config
+data:
+   HADOOP_HOME: /opt/hadoop
+   HIVE-SITE.XML_hadoop.proxyuser.hive.groups: "*"
+   HIVE-SITE.XML_hadoop.proxyuser.hive.hosts: "*"
+   HIVE-SITE.XML_javax.jdo.option.ConnectionURL: jdbc:postgresql://hive-metastoredb-0.hive-metastore/metastore
+   HIVE-SITE.XML_javax.jdo.option.ConnectionDriverName: org.postgresql.Driver
+   HIVE-SITE.XML_javax.jdo.option.ConnectionPassword: rootpwd
+   HIVE-SITE.XML_javax.jdo.option.ConnectionUserName: hive
+   HIVE-SITE.XML_datanucleus.schema.autoCreateAll: "true"
+   HIVE-SITE.XML_hive.metastore.schema.verification: "false"
+   HIVE-SITE.XML_hive.metastore.uris: thrift://hive-metastore-0.-hive-metastore:9083
+   HIVE-SITE.XML_hive.server2.enable.doAs: "false"
+ 
+
+
+

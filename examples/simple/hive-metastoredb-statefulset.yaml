@@ -1,0 +1,50 @@
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hive-metastoredb
+  labels:
+    app: hive
+    component: metastoredb
+spec:
+  selector:
+    matchLabels:
+      app: hive
+      component: metastoredb
+  replicas: 1
+  serviceName: hive-metastoredb
+  template:
+    metadata:
+      labels:
+        app: hive
+        component: metastoredb
+    spec:
+      containers:
+      - name: db
+        image: postgres:12
+        env:
+        - name: POSTGRES_PASSWORD
+          value: rootpwd
+        - name: POSTGRES_DB
+          value: metastore
+        - name: POSTGRES_USER
+          value: hive
+        envFrom:
+        - configMapRef:
+            name: hdfs-config
+        volumeMounts:
+        - name: hadoop
+          mountPath: /opt/hadoop
+      initContainers:
+      - name: hadoopcopy
+        image: flokkr/hadoop:3.1.2
+        command:
+        - bash
+        - -c
+        - cp -r /opt/hadoop/* /opt/hadoop-dist/
+        volumeMounts:
+        - name: hadoop
+          mountPath: /opt/hadoop-dist
+      volumes:
+      - name: hadoop
+        emptyDir: {}
